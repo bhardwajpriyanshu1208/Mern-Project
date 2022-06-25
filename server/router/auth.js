@@ -1,5 +1,8 @@
 const express = require("express");
 
+require("../db/conn");
+
+const User = require("../model/userSchema");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -7,10 +10,27 @@ router.get("/", (req, res) => {
   res.send("HEllo World from router");
 });
 
-router.post("/register", (req, res) => {
-  console.log(req.body);
-  res.json({ message: req.body });
-  // res.send("mera register page");
+router.post("/register", async (req, res) => {
+  const { name, email, mobile, choice, password } = req.body;
+
+  if (!name || !email || !mobile || !choice || !password) {
+    return res.status(422).json({ error: "Plz fill the field property" });
+  }
+
+  try {
+    const userExist = await User.findOne({ email: email });
+    if (userExist) {
+      return res.status(422).json({ error: "Email already exist" });
+    }
+
+    const user = new User({ name, email, mobile, choice, password });
+
+    await user.save();
+
+    res.status(201).json({ message: "user registerd successfully" });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = router;

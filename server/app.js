@@ -3,20 +3,7 @@ const express = require("express");
 
 const app = express();
 
-const password = encodeURIComponent("Priyanshu@123");
-
-const DB = `mongodb+srv://realestate:${password}@cluster0.9vtac.mongodb.net/realestate?retryWrites=true&w=majority`;
-
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log("connection succesful");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+require("./db/conn");
 
 // const User = require("./model/userSchema");
 app.use(express.json());
